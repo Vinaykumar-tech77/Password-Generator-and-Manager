@@ -1,2 +1,2 @@
-# Password_Manager
-Password_Manager is a Website Project where a user can add details like platform name, username and password and store them securely . user can also opt for strongest password generation 
+# Password_Generator_&_Manager
+Password Generator & Manager is a web application that allows users to securely store login credentials, including platform names, usernames, and passwords. Users can also generate strong, custom-length passwords using the built-in password generator.
