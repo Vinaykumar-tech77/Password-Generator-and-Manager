@@ -1,22 +1,36 @@
+// Toggles the password input state based on the checkbox
 function togglePasswordInput() {
-    const checkbox = document.getElementById("useGenerated");
+    const isChecked = document.getElementById("useGenerated").checked;
+    const generatorOptions = document.getElementById("generatorOptions");
     const passwordInput = document.getElementById("password");
-    const generateBtn = document.getElementById("generateBtn");
 
-    if (checkbox.checked) {
-        passwordInput.disabled = true;
-        passwordInput.value = ""; // clear manual input
-        generateBtn.style.display = "inline-block";
+    if (isChecked) {
+        generatorOptions.style.display = "block";
+        passwordInput.readOnly = true;
+        passwordInput.value = ""; // Clear input
     } else {
-        passwordInput.disabled = false;
-        generateBtn.style.display = "none";
+        generatorOptions.style.display = "none";
+        passwordInput.readOnly = false;
+        passwordInput.value = ""; // Clear input
     }
 }
 
+// Generates a strong password of given length ONCE
+let generated = false;
+function generatePassword() {
+    if (generated) return; // Prevent multiple generations
 
-function generatePassword(length = 8) {
+    const lengthInput = document.getElementById("passwordLength");
+    const length = parseInt(lengthInput.value);
+
+    if (isNaN(length) || length < 8) {
+        alert("Please enter a password length of more than 7.");
+        return;
+    }
+
     const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{};:,.<>?";
     let password = "";
+
     for (let i = 0; i < length; i++) {
         const randIndex = Math.floor(Math.random() * chars.length);
         password += chars[randIndex];
@@ -25,99 +39,103 @@ function generatePassword(length = 8) {
     const passwordInput = document.getElementById("password");
     passwordInput.value = password;
 
-    navigator.clipboard.writeText(password).then(() => {
-        alert("Generated password copied to clipboard!");
-    });
+    lengthInput.value = ""; // Clear length input
+    generated = true;
 }
 
-
-
-
-
-function maskPassword(pass){
-    let str = ""
-    for(let index = 0;index < pass.length; index++){
-        str += "*"
-    }
-    return str
+// Masks password with *
+function maskPassword(pass) {
+    return "*".repeat(pass.length);
 }
-function copyText(txt){
+
+// Copies text to clipboard
+function copyText(txt) {
     navigator.clipboard.writeText(txt).then(
         () => {
-            //alert("Copied the Text:"+txt);
             const alertEl = document.querySelector(".alert");
-                alertEl.classList.remove("alert");
-                setTimeout(() => {
-                    alertEl.style.display = "none";
-                }, 2000);
+            alertEl.classList.remove("alert");
+            setTimeout(() => {
+                alertEl.style.display = "none";
+            }, 2000);
         },
         () => {
-            alert("Copying Failed!!!")
-        },
+            alert("Copying Failed!");
+        }
     );
 }
-const deletePassword = (platform)=>{
-    let data = localStorage.getItem("passwords")
+
+// Deletes password from storage
+function deletePassword(platform) {
+    let data = localStorage.getItem("passwords");
     let arr = JSON.parse(data);
-    arrUpdated = arr.filter((e)=>{
-        return e.platform != platform
-    })
-    localStorage.setItem("passwords",JSON.stringify(arrUpdated))
-    alert(`Sucessfully Deleted ${platform}'s Password!!!`)
-    showPasswords()
+    let arrUpdated = arr.filter((e) => e.platform !== platform);
+    localStorage.setItem("passwords", JSON.stringify(arrUpdated));
+    alert(`Successfully Deleted ${platform}'s Password!`);
+    showPasswords();
 }
-showPasswords = ()=>{
-let tb = document.querySelector("table")
-let data = localStorage.getItem("passwords")
-if(data == null || JSON.parse(data).length == 0){ 
-    tb.innerHTML = "No Data Available!!!"
+
+// Shows stored passwords
+function showPasswords() {
+    let tb = document.querySelector("table");
+    let data = localStorage.getItem("passwords");
+
+    if (data == null || JSON.parse(data).length === 0) {
+        tb.innerHTML = "No Data Available!";
+    } else {
+        tb.innerHTML = `<tr>
+            <th>Platform</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Delete</th>
+        </tr>`;
+
+        let arr = JSON.parse(data);
+        let str = "";
+
+        for (let element of arr) {
+            str += `<tr>
+                <td>${element.platform}<img onclick="copyText('${element.platform}')" src="copy.svg" alt="Copy Icon" /></td>
+                <td>${element.username}<img onclick="copyText('${element.username}')" src="copy.svg" alt="Copy Icon" /></td>
+                <td>${maskPassword(element.password)}<img onclick="copyText('${element.password}')" src="copy.svg" alt="Copy Icon" /></td>
+                <td><button class="btnn" onclick="deletePassword('${element.platform}')">Delete</button></td>
+            </tr>`;
+        }
+
+        tb.innerHTML += str;
+    }
+
+    // Reset input fields
+    document.getElementById("platform").value = "";
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+    generated = false; // allow re-generation next time
 }
-else{
-    tb.innerHTML = `<tr>
-                    <th>Platform</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Delete</th>
-                </tr>`
-    let arr = JSON.parse(data);
-    let str = ""
-    for(let index = 0;index<arr.length;index++){
-        const element = arr[index];
-        str += `<tr>
-        <td>${element.platform}<img onclick="copyText('${element.platform}')" src="copy.svg" alt="Copy Icon" />
-</td>
-        <td>${element.username}<img onclick="copyText('${element.username}')" src="copy.svg" alt="Copy Icon"  />
-</td>
-        <td>${maskPassword(element.password)}<img onclick="copyText('${element.password}')" src="copy.svg" alt="Copy Icon" />
-</td>
-        <td><button class="btnn" onclick="deletePassword('${element.platform}')">Delete</button></td>
-        </tr>`
+
+// Save new credentials
+document.querySelector(".btn").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    let platformVal = document.getElementById("platform").value.trim();
+    let usernameVal = document.getElementById("username").value.trim();
+    let passwordVal = document.getElementById("password").value.trim();
+
+    if (!platformVal || !usernameVal || !passwordVal) {
+        alert("Platform, Username, and Password are required!");
+        return;
     }
-    tb.innerHTML = tb.innerHTML + str
-}   
-platform.value = ""
-username.value = ""
-password.value = "" 
-}
-console.log("Working");
-showPasswords()
-document.querySelector(".btn").addEventListener("click", (e)=>{
-    e.preventDefault()
-    console.log("Clicked");
-    console.log(username.value, password.value);
-    let passwords = localStorage.getItem("passwords")
-    console.log(passwords)
-    if(passwords == null){
-        let json = []
-        json.push({platform:platform.value,username:username.value,password:password.value})
-        alert("Credentials Saved!!!")
-        localStorage.setItem("passwords",JSON.stringify(json))
-    }
-    else{
-        let json = JSON.parse(localStorage.getItem("passwords"))
-        json.push({platform:platform.value,username:username.value,password:password.value})
-        alert("Credentials Saved!!!")
-        localStorage.setItem("passwords",JSON.stringify(json))
-    }
-    showPasswords()
-})
+
+    let passwords = JSON.parse(localStorage.getItem("passwords")) || [];
+    passwords.push({
+        platform: platformVal,
+        username: usernameVal,
+        password: passwordVal,
+    });
+
+    localStorage.setItem("passwords", JSON.stringify(passwords));
+    alert("Credentials Saved!");
+    showPasswords();
+});
+
+// Initial call
+console.log("Working...");
+showPasswords();
