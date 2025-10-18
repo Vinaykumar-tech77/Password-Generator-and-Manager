@@ -1,59 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
-        <link href="style.css" rel="stylesheet">
-        <title>Password_Manager</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password_Manager</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
-        <nav>
-            <div class="logo">Password_Manager</div>
-        </nav>
-        <div class="container">
-            <h1>Welcome To Password Manager</h1>
-            <p>Safely store, manage, and access all your passwords in one secure place.
-Your privacy is our top priority – let’s make security simple and smart.</p>
-            <h2>Your Passwords</h2>
-            <p class="alert">Sucessfully Copied !</p>
-            <table>
-                <tr>
-                    <th>Platform</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Delete</th>
-                </tr>
-            </table>
-            <h2>Add New Password</h2>
-            <form action="/submit" method="post">
+    <nav>
+        <div class="logo">PG&M</div>
+    </nav>
 
-                <label for="platform">Platform:</label>
-                <input type="text" id="platform" name="platform" required>
-                <br><br>
+    <div class="container">
+        <h1>Welcome To Password Generator & Manager</h1>
+        <h4 style="background-color: black; color: white;">Safely store, manage, and access all your passwords in one secure place. You can also generate strong passwords by specifying the desired length. Your privacy is our top priority – let’s make security simple and smart.
+        </h4>
 
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <br><br>
+        <h2>Your Passwords</h2>
+        <p class="alert">Successfully Copied!</p>
 
-                <label for="password">Password:
-                <input type="text" id="password" placeholder="Enter password Manually" />
-                </label>
-                <br/>
-            </br>
-                <label>Generate Password
-                <input type="checkbox" id="useGenerated" onchange="togglePasswordInput()" />
-                </label>
-                <button type="button" id="generateBtn" onclick="generatePassword()" style="display: none;" class="btnn">
-                Generate Secure Password
+        <table>
+            <tr>
+                <th>Platform</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Delete</th>
+            </tr>
+        </table>
+
+        <h2>Add New Password</h2>
+        <form onsubmit="return false;">
+            <label for="platform">Platform:</label>
+            <input type="text" id="platform" name="platform" required>
+            <br><br>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <br><br>
+
+            <label for="password">Password:</label>
+            <input type="text" id="password" name="password" required>
+            <br><br>
+
+            <label style="font-weight: bold;">
+                Want to Generate Password ?
+                <input type="checkbox" id="useGenerated" onchange="togglePasswordInput()">
+            </label>
+
+            <div id="generatorOptions" style="display: none; margin-top: 10px;">
+                <input type="number" id="passwordLength" placeholder="Enter password length" min="1">
+                <button type="button" onclick="generatePassword()" class="btnn">
+                    Generate Secure Password
                 </button>
-                <br>
-                <br>
-                <input type="submit" value="Submit" class="btn">
-            </form>
-        </div>
-        <script src="script.js"></script>
-    </body>
+            </div>
+
+            <br><br>
+            <button type="submit" class="btn">Save Credentials</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
